@@ -1,0 +1,135 @@
+import React, { useEffect, useState } from 'react';
+
+// Single-file React app that contains two product pages/components:
+// - Kudas Munira Washing Soup
+// - Asmoneera Washing Soup
+// Each page includes: gold label logo, product description, auto narrator (SpeechSynthesis), and a simple top selector to switch between products.
+
+export default function WashingSoupsApp() {
+  const [page, setPage] = useState('kudas'); // 'kudas' or 'asmoneera'
+
+  return (
+    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
+      <nav className="w-full bg-white shadow p-4 flex items-center justify-center gap-4">
+        <button
+          onClick={() => setPage('kudas')}
+          className={`px-4 py-2 rounded ${page === 'kudas' ? 'bg-yellow-600 text-white' : 'bg-white text-yellow-700 border border-yellow-600'}`}
+        >
+          Kudas Munira Washing Soup
+        </button>
+        <button
+          onClick={() => setPage('asmoneera')}
+          className={`px-4 py-2 rounded ${page === 'asmoneera' ? 'bg-yellow-600 text-white' : 'bg-white text-yellow-700 border border-yellow-600'}`}
+        >
+          Asmoneera Washing Soup
+        </button>
+      </nav>
+
+      <main className="container mx-auto p-6">
+        {page === 'kudas' ? <KudasMunira /> : <Asmoneera />}
+      </main>
+
+      <footer className="text-center text-sm text-gray-600 p-6">© {new Date().getFullYear()} Washing Soups Collection</footer>
+    </div>
+  );
+}
+
+function GoldLabel({ title }) {
+  return (
+    <div className="flex items-center justify-center">
+      <div className="w-44 h-44 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-2xl border-4 border-yellow-700">
+        <span className="text-lg font-extrabold text-white text-center">{title}</span>
+      </div>
+    </div>
+  );
+}
+
+function useNarrator(text, deps = []) {
+  useEffect(() => {
+    if (!text || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    // Delay slightly to avoid browser autoplay restrictions
+    const t = setTimeout(() => {
+      const ut = new SpeechSynthesisUtterance(text);
+      ut.rate = 1;
+      ut.pitch = 1;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(ut);
+    }, 500);
+
+    return () => clearTimeout(t);
+  }, deps); // eslint-disable-line react-hooks/exhaustive-deps
+}
+
+function KudasMunira() {
+  const intro = "Welcome to Kudas Munira Washing Soup. Gentle on fabrics, strong on stains, and scented with a fresh floral perfume. Try Kudas Munira for a premium wash experience.";
+  useNarrator(intro, [/* run on mount */]);
+
+  return (
+    <section className="bg-white rounded-xl shadow p-6">
+      <header className="text-center">
+        <h1 className="text-3xl font-bold text-yellow-700">Kudas Munira Washing Soup</h1>
+        <p className="mt-2 text-sm text-gray-700">Premium washing soap with gentle perfume and excellent cleaning power.</p>
+      </header>
+
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+        <GoldLabel title="Kudas Munira" />
+
+        <div>
+          <h3 className="text-xl font-semibold">Sweet Floral Perfume</h3>
+          <p className="mt-2 text-gray-700 leading-relaxed">
+            Kudas Munira is crafted to leave clothes smelling fresh and feeling soft. Its balanced formulation is suitable for hand-wash and machine-wash. It removes common stains while preserving fabric color and texture.
+          </p>
+
+          <ul className="mt-4 space-y-2 text-gray-700">
+            <li>• Gentle on colors and fabric</li>
+            <li>• Strong stain removal</li>
+            <li>• Eco-friendly ingredients (biodegradable)</li>
+            <li>• Long-lasting fragrance</li>
+          </ul>
+
+          <div className="mt-6 flex gap-3">
+            <button className="px-4 py-2 rounded bg-yellow-600 text-white">Buy Now</button>
+            <button className="px-4 py-2 rounded border border-yellow-600 text-yellow-700 bg-white">More Details</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Asmoneera() {
+  const intro = "Welcome to Asmoneera Washing Soup. A luxury wash soap designed for delicate fabrics — smooth texture, gentle perfume, and effective cleaning.";
+  useNarrator(intro, [/* run on mount */]);
+
+  return (
+    <section className="bg-white rounded-xl shadow p-6">
+      <header className="text-center">
+        <h1 className="text-3xl font-bold text-yellow-700">Asmoneera Washing Soup</h1>
+        <p className="mt-2 text-sm text-gray-700">Delicate care with a luxurious scent.</p>
+      </header>
+
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+        <div>
+          <h3 className="text-xl font-semibold">Soft on Fabrics</h3>
+          <p className="mt-2 text-gray-700 leading-relaxed">
+            Asmoneera focuses on fabric care — it gently cleans without roughening fibers, preserves lace and silk, and leaves a refined perfume trail. Perfect for special garments.
+          </p>
+
+          <ul className="mt-4 space-y-2 text-gray-700">
+            <li>• Ultra gentle formulation</li>
+            <li>• Preserves delicate threads</li>
+            <li>• Subtle, elegant perfume</li>
+            <li>• Suitable for hand and machine wash</li>
+          </ul>
+
+          <div className="mt-6 flex gap-3">
+            <button className="px-4 py-2 rounded bg-yellow-600 text-white">Buy Now</button>
+            <button className="px-4 py-2 rounded border border-yellow-600 text-yellow-700 bg-white">More Details</button>
+          </div>
+        </div>
+
+        <GoldLabel title="Asmoneera" />
+      </div>
+    </section>
+  );
+}
